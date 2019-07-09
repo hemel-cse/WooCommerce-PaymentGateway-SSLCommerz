@@ -44,7 +44,6 @@
 
 
 ## Contributors
-> C.M. Sayedur Rahman,
-> JM Redwan,
 > Prabal Mallick,
+> C.M. Sayedur Rahman,
 > Rakibul Islam
