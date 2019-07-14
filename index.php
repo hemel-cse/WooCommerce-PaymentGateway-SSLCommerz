@@ -190,7 +190,6 @@ function woocommerce_sslcommerz_init()
             global $woocommerce;
             // global $product;
             $order = new WC_Order($order_id);
-            $order_id = $order_id . '_' . date("ymds");
             $redirect_url = ($this->redirect_page_id == "" || $this->redirect_page_id == 0) ? get_site_url() . "/" : get_permalink($this->redirect_page_id);
             $fail_url = ($this->fail_page_id == "" || $this->fail_page_id == 0) ? get_site_url() . "/" : get_permalink($this->fail_page_id);
             $redirect_url = add_query_arg('wc-api', get_class($this), $redirect_url);
@@ -211,7 +210,6 @@ function woocommerce_sslcommerz_init()
 
             //NEW V4 HOSTED API OF SSLCOMMERZ
             $post_data = array(
-                'store_id'      => $this->store_id,
                 'store_id'      => $this->store_id,
                 'store_passwd'  => $this->store_password,
                 'total_amount'  => $order->order_total,
@@ -324,16 +322,14 @@ function woocommerce_sslcommerz_init()
         function check_sslcommerz_response()
         {
             global $woocommerce;
-            $info = explode("_", $_REQUEST['tran_id']);
-            $order_id = $info[0];
-            $order = wc_get_order($info[0]);
+            $tran_id = $_REQUEST['tran_id'];
+            $order = wc_get_order($tran_id);
             $fail_url = ($this->fail_page_id == "" || $this->fail_page_id == 0) ? get_site_url() . "/" : get_permalink($this->fail_page_id);
             $fail_url = add_query_arg('wc-api', get_class($this), $fail_url);
 
-            if (isset($_REQUEST['tran_id'])) {
+            if (isset($tran_id)) {
                 $redirect_url = ($this->redirect_page_id == "" || $this->redirect_page_id == 0) ? get_site_url() . "/" : get_permalink($this->redirect_page_id);
                 $fail_url = ($this->fail_page_id == "" || $this->fail_page_id == 0) ? get_site_url() . "/" : get_permalink($this->fail_page_id);
-                $order_id = $info[0];
                 $this->msg['class'] = 'error';
                 $this->msg['message'] = "Thank you for shopping with us. However, the transaction has been declined.";
 
@@ -348,9 +344,9 @@ function woocommerce_sslcommerz_init()
 
                 if (empty($val_id)) {
                     if ('yes' == $this->testmode) {
-                        $valid_url_own = ("https://sandbox.sslcommerz.com/validator/api/merchantTransIDvalidationAPI.php?tran_id=" . $order_id . "&Store_Id=" . $store_id . "&Store_Passwd=" . $store_passwd . "&v=1&format=json");
+                        $valid_url_own = ("https://sandbox.sslcommerz.com/validator/api/merchantTransIDvalidationAPI.php?tran_id=" . $tran_id . "&Store_Id=" . $store_id . "&Store_Passwd=" . $store_passwd . "&v=1&format=json");
                     } else {
-                        $valid_url_own = ("https://securepay.sslcommerz.com/validator/api/merchantTransIDvalidationAPI.php?tran_id=" . $order_id . "&Store_Id=" . $store_id . "&Store_Passwd=" . $store_passwd . "&v=1&format=json");
+                        $valid_url_own = ("https://securepay.sslcommerz.com/validator/api/merchantTransIDvalidationAPI.php?tran_id=" . $tran_id . "&Store_Id=" . $store_id . "&Store_Passwd=" . $store_passwd . "&v=1&format=json");
                     }
 
                     $ownvalid = curl_init();
@@ -440,9 +436,9 @@ function woocommerce_sslcommerz_init()
                     }
                 }
 
-                if ($order_id != '') {
+                if ($tran_id != '') {
                     try {
-                        $order = wc_get_order($info[0]);
+                        $order = wc_get_order($tran_id);
                         $store_id = $_REQUEST['[tran_id'];
                         $amount = $_REQUEST['amount'];
                         $transauthorised = false;
