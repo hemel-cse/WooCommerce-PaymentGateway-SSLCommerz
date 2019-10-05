@@ -226,20 +226,23 @@ function woocommerce_sslcommerz_init()
                 'cus_postcode'  => $order->billing_postcode,
                 'cus_phone'     => $order->billing_phone,
                 'cus_email'     => $order->billing_email,
-                'ship_name'     => $order->shipping_first_name . ' ' . $order->shipping_last_name,
-                'ship_add1'     => $order->shipping_address_1,
-                'ship_country'  => $order->shipping_country,
-                'ship_state'    => $order->shipping_state,
-                'delivery_tel'  => '',
-                'ship_city'     => $order->shipping_city,
-                'ship_postcode' => $order->shipping_postcode,
                 'currency'      => get_woocommerce_currency(),
                 'product_category'  => 'ecommerce',
-                'shipping_method'   => 'YES',
+                'shipping_method'   => $order->needs_shipping_address() ? 'YES' : 'NO',
                 'num_of_item'       => $woocommerce->cart->cart_contents_count,
                 'product_name'      => $product_name,
                 'product_profile'   => 'general'
             );
+
+            if ($order->needs_shipping_address()) {
+                $post_data['ship_name']     = $order->shipping_first_name . ' ' . $order->shipping_last_name;
+                $post_data['ship_add1']     = $order->shipping_address_1;
+                $post_data['ship_country']  = $order->shipping_country;
+                $post_data['ship_state']    = $order->shipping_state;;
+                $post_data['delivery_tel']  = '';
+                $post_data['ship_city']     = $order->shipping_city;
+                $post_data['ship_postcode'] = $order->shipping_postcode;
+            }
 
             // echo "<pre>";
             // print_r($post_data);
